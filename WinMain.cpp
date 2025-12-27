@@ -13,6 +13,10 @@
 #define ID_BTN_CLEAR_ALL 105
 #define ID_BTN_ADD_VERTEX 106
 #define ID_BTN_ADD_EDGE 107
+#define ID_BTN_DELETE_EDGE 108
+#define ID_BTN_DELETE_VERTEX 109
+#define ID_BTN_SAVE_FILE 110
+#define ID_BTN_READ_FILE 111
 
 #define ID_EDIT_VERTEX_NAME 201
 #define ID_EDIT_EDGE_WEIGHT 202
@@ -56,20 +60,25 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     switch (uMsg) {
     case WM_CREATE: {
         int startX = 820;
-        CreateWindowA("BUTTON", "Загрузить файл", WS_VISIBLE | WS_CHILD, startX, 20, 150, 30, hwnd, (HMENU)ID_BTN_LOAD_FILE, NULL, NULL);
-        CreateWindowA("BUTTON", "Найти путь", WS_VISIBLE | WS_CHILD, startX, 60, 150, 30, hwnd, (HMENU)ID_BTN_CALC_PATH, NULL, NULL);
+        CreateWindowA("BUTTON", "Загрузить вершины", WS_VISIBLE | WS_CHILD, startX, 20, 150, 30, hwnd, (HMENU)ID_BTN_LOAD_FILE, NULL, NULL);
+        CreateWindowA("BUTTON", "Сохранить в файл", WS_VISIBLE | WS_CHILD, startX, 55, 150, 30, hwnd, (HMENU)ID_BTN_SAVE_FILE, NULL, NULL);
+        CreateWindowA("BUTTON", "Считать граф с файла", WS_VISIBLE | WS_CHILD, startX, 90, 150, 30, hwnd, (HMENU)ID_BTN_READ_FILE, NULL, NULL);
+
+        CreateWindowA("BUTTON", "Найти путь", WS_VISIBLE | WS_CHILD, startX, 130, 150, 30, hwnd, (HMENU)ID_BTN_CALC_PATH, NULL, NULL);
         
-        CreateWindowA("STATIC", "Имя новой вершины:", WS_VISIBLE | WS_CHILD, startX, 110, 150, 20, hwnd, NULL, NULL, NULL);
-        hEditVName = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "Street", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL, startX, 130, 150, 25, hwnd, (HMENU)ID_EDIT_VERTEX_NAME, NULL, NULL);
-        CreateWindowA("BUTTON", "Добавить точку", WS_VISIBLE | WS_CHILD, startX, 160, 150, 30, hwnd, (HMENU)ID_BTN_ADD_VERTEX, NULL, NULL);
+        CreateWindowA("STATIC", "Имя вершины:", WS_VISIBLE | WS_CHILD, startX, 170, 150, 20, hwnd, NULL, NULL, NULL);
+        hEditVName = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "Street", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL, startX, 190, 150, 25, hwnd, (HMENU)ID_EDIT_VERTEX_NAME, NULL, NULL);
+        CreateWindowA("BUTTON", "Добавить точку", WS_VISIBLE | WS_CHILD, startX, 220, 72, 30, hwnd, (HMENU)ID_BTN_ADD_VERTEX, NULL, NULL);
+        CreateWindowA("BUTTON", "Удалить точку", WS_VISIBLE | WS_CHILD, startX + 78, 220, 72, 30, hwnd, (HMENU)ID_BTN_DELETE_VERTEX, NULL, NULL);
 
-        CreateWindowA("STATIC", "Длина ребра:", WS_VISIBLE | WS_CHILD, startX, 210, 150, 20, hwnd, NULL, NULL, NULL);
-        hEditEWeight = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "10", WS_VISIBLE | WS_CHILD | ES_NUMBER, startX, 230, 150, 25, hwnd, (HMENU)ID_EDIT_EDGE_WEIGHT, NULL, NULL);
-        CreateWindowA("BUTTON", "Добавить ребро", WS_VISIBLE | WS_CHILD, startX, 260, 150, 30, hwnd, (HMENU)ID_BTN_ADD_EDGE, NULL, NULL);
+        CreateWindowA("STATIC", "Длина ребра:", WS_VISIBLE | WS_CHILD, startX, 260, 150, 20, hwnd, NULL, NULL, NULL);
+        hEditEWeight = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "10", WS_VISIBLE | WS_CHILD | ES_NUMBER, startX, 280, 150, 25, hwnd, (HMENU)ID_EDIT_EDGE_WEIGHT, NULL, NULL);
+        CreateWindowA("BUTTON", "Добавить ребро", WS_VISIBLE | WS_CHILD, startX, 310, 72, 30, hwnd, (HMENU)ID_BTN_ADD_EDGE, NULL, NULL);
+        CreateWindowA("BUTTON", "Удалить ребро", WS_VISIBLE | WS_CHILD, startX + 78, 310, 72, 30, hwnd, (HMENU)ID_BTN_DELETE_EDGE, NULL, NULL);
 
-        CreateWindowA("BUTTON", "Случ. ребра", WS_VISIBLE | WS_CHILD, startX, 320, 150, 30, hwnd, (HMENU)ID_BTN_GEN_RANDOM, NULL, NULL);
-        CreateWindowA("BUTTON", "Очистить ребра", WS_VISIBLE | WS_CHILD, startX, 360, 150, 30, hwnd, (HMENU)ID_BTN_CLEAR_EDGES, NULL, NULL);
-        CreateWindowA("BUTTON", "Очистить всё", WS_VISIBLE | WS_CHILD, startX, 400, 150, 30, hwnd, (HMENU)ID_BTN_CLEAR_ALL, NULL, NULL);
+        CreateWindowA("BUTTON", "Случ. ребра", WS_VISIBLE | WS_CHILD, startX, 360, 150, 30, hwnd, (HMENU)ID_BTN_GEN_RANDOM, NULL, NULL);
+        CreateWindowA("BUTTON", "Очистить ребра", WS_VISIBLE | WS_CHILD, startX, 400, 150, 30, hwnd, (HMENU)ID_BTN_CLEAR_EDGES, NULL, NULL);
+        CreateWindowA("BUTTON", "Очистить всё", WS_VISIBLE | WS_CHILD, startX, 440, 150, 30, hwnd, (HMENU)ID_BTN_CLEAR_ALL, NULL, NULL);
         
         return 0;
     }
@@ -158,6 +167,96 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             g_SelectedV1 = ""; g_SelectedV2 = "";
             InvalidateRect(hwnd, NULL, TRUE);
             break;
+
+        case ID_BTN_DELETE_EDGE: {
+            if (!g_SelectedV1.empty() && !g_SelectedV2.empty()) {
+                try {
+                    g_TransportMap->DeleteEdge(g_SelectedV1, g_SelectedV2);
+                    InvalidateRect(hwnd, NULL, TRUE);
+                } catch (...) { MessageBoxA(hwnd, "Ребро не найдено", "Ошибка", MB_OK); }
+            }
+            break;
+        }
+
+        case ID_BTN_DELETE_VERTEX: {
+            if (!g_SelectedV1.empty()) {
+                try {
+                    g_TransportMap->DeleteVertex(g_SelectedV1);
+                    g_SelectedV1 = "";
+                    InvalidateRect(hwnd, NULL, TRUE);
+                } catch (...) { MessageBoxA(hwnd, "Ошибка удаления вершины", "Ошибка", MB_OK); }
+            }
+            break;
+        }
+
+        case ID_BTN_SAVE_FILE: {
+            OPENFILENAMEA ofn;
+            char szFile[260] = "GraphReady.txt";
+            ZeroMemory(&ofn, sizeof(ofn));
+            ofn.lStructSize = sizeof(ofn);
+            ofn.hwndOwner = hwnd;
+            ofn.lpstrFile = szFile;
+            ofn.nMaxFile = sizeof(szFile);
+            ofn.lpstrFilter = "Text Files\0*.txt\0";
+            ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
+
+            if (GetSaveFileNameA(&ofn)) {
+                std::ofstream file(szFile);
+                auto vertices = g_TransportMap->GetAllVertices();
+                auto edges = g_TransportMap->GetAllEdges();
+
+                for (auto const& [name, ptr] : vertices) {
+                    file << name << "\n";
+                }
+                file << "<Edges>\n";
+                for (auto const& [key, edge] : edges) {
+                    file << edge->start->data << "^" << edge->finish->data << "^" << edge->data << "\n";
+                }
+                MessageBoxA(hwnd, "Граф сохранен!", "Успех", MB_OK);
+            }
+            break;
+        }
+
+        case ID_BTN_READ_FILE: {
+            OPENFILENAMEA ofn;
+            char szFile[260] = { 0 };
+            ZeroMemory(&ofn, sizeof(ofn));
+            ofn.lStructSize = sizeof(ofn);
+            ofn.hwndOwner = hwnd;
+            ofn.lpstrFile = szFile;
+            ofn.nMaxFile = sizeof(szFile);
+            ofn.lpstrFilter = "Text Files\0*.txt\0";
+
+            if (GetOpenFileNameA(&ofn)) {
+                std::ifstream file(szFile);
+                std::string line;
+                bool readingEdges = false;
+                g_TransportMap->Clear();
+
+                while (std::getline(file, line)) {
+                    if (line.empty()) continue;
+                    if (line == "<Edges>") {
+                        readingEdges = true;
+                        continue;
+                    }
+
+                    if (!readingEdges) {
+                        g_TransportMap->AddVertex(line);
+                    } else {
+                        size_t p1 = line.find('^');
+                        size_t p2 = line.find('^', p1 + 1);
+                        if (p1 != std::string::npos && p2 != std::string::npos) {
+                            std::string v1 = line.substr(0, p1);
+                            std::string v2 = line.substr(p1 + 1, p2 - p1 - 1);
+                            int weight = std::stoi(line.substr(p2 + 1));
+                            g_TransportMap->AddEdge(weight, v1, v2);
+                        }
+                    }
+                }
+                InvalidateRect(hwnd, NULL, TRUE);
+            }
+            break;
+        }
         }
         return 0;
     }
