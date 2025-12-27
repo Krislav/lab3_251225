@@ -6,7 +6,6 @@
 #include <cmath>
 #include "TransportMap/TransportMap.hpp" 
 
-// Константы управления
 #define ID_BTN_LOAD_FILE 101
 #define ID_BTN_CALC_PATH 102
 #define ID_BTN_GEN_RANDOM 103
@@ -15,15 +14,13 @@
 #define ID_BTN_ADD_VERTEX 106
 #define ID_BTN_ADD_EDGE 107
 
-// ID для полей ввода
 #define ID_EDIT_VERTEX_NAME 201
 #define ID_EDIT_EDGE_WEIGHT 202
 
-// Глобальные переменные
 TransportMap* g_TransportMap = nullptr;
 std::string g_SelectedV1 = "";
 std::string g_SelectedV2 = "";
-HWND hEditVName, hEditEWeight; // Хендлы полей ввода
+HWND hEditVName, hEditEWeight;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void DrawGraph(HWND hwnd, HDC hdc);
@@ -59,21 +56,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     switch (uMsg) {
     case WM_CREATE: {
         int startX = 820;
-        // Кнопки управления файлом и графом
         CreateWindowA("BUTTON", "Загрузить файл", WS_VISIBLE | WS_CHILD, startX, 20, 150, 30, hwnd, (HMENU)ID_BTN_LOAD_FILE, NULL, NULL);
         CreateWindowA("BUTTON", "Найти путь", WS_VISIBLE | WS_CHILD, startX, 60, 150, 30, hwnd, (HMENU)ID_BTN_CALC_PATH, NULL, NULL);
         
-        // Секция добавления вершины
         CreateWindowA("STATIC", "Имя новой вершины:", WS_VISIBLE | WS_CHILD, startX, 110, 150, 20, hwnd, NULL, NULL, NULL);
-        hEditVName = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "City", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL, startX, 130, 150, 25, hwnd, (HMENU)ID_EDIT_VERTEX_NAME, NULL, NULL);
+        hEditVName = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "Street", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL, startX, 130, 150, 25, hwnd, (HMENU)ID_EDIT_VERTEX_NAME, NULL, NULL);
         CreateWindowA("BUTTON", "Добавить точку", WS_VISIBLE | WS_CHILD, startX, 160, 150, 30, hwnd, (HMENU)ID_BTN_ADD_VERTEX, NULL, NULL);
 
-        // Секция добавления ребра
         CreateWindowA("STATIC", "Длина ребра:", WS_VISIBLE | WS_CHILD, startX, 210, 150, 20, hwnd, NULL, NULL, NULL);
         hEditEWeight = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", "10", WS_VISIBLE | WS_CHILD | ES_NUMBER, startX, 230, 150, 25, hwnd, (HMENU)ID_EDIT_EDGE_WEIGHT, NULL, NULL);
         CreateWindowA("BUTTON", "Добавить ребро", WS_VISIBLE | WS_CHILD, startX, 260, 150, 30, hwnd, (HMENU)ID_BTN_ADD_EDGE, NULL, NULL);
 
-        // Остальные кнопки
         CreateWindowA("BUTTON", "Случ. ребра", WS_VISIBLE | WS_CHILD, startX, 320, 150, 30, hwnd, (HMENU)ID_BTN_GEN_RANDOM, NULL, NULL);
         CreateWindowA("BUTTON", "Очистить ребра", WS_VISIBLE | WS_CHILD, startX, 360, 150, 30, hwnd, (HMENU)ID_BTN_CLEAR_EDGES, NULL, NULL);
         CreateWindowA("BUTTON", "Очистить всё", WS_VISIBLE | WS_CHILD, startX, 400, 150, 30, hwnd, (HMENU)ID_BTN_CLEAR_ALL, NULL, NULL);
@@ -122,9 +115,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 if (weight <= 0) weight = 1;
 
                 try {
-                    // Используем AddManualEdge, если вы его добавили, 
-                    // или стандартный AddEdge (который внутри вызывает Map->AddEdge)
-                    g_TransportMap->AddManualEdge(g_SelectedV1, g_SelectedV2, weight);
+                    g_TransportMap->AddEdge(weight, g_SelectedV1, g_SelectedV2);
                     InvalidateRect(hwnd, NULL, TRUE);
                 } catch(...) { MessageBoxA(hwnd, "Ошибка добавления ребра", "Error", MB_OK); }
             } else {

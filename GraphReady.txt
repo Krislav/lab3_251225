@@ -1,0 +1,16 @@
+Aviation street
+Bochkova street
+Devincev
+Iliinka
+Kolomenski travel
+Linden alley
+Margelov street
+Onejskaya street
+Cristmas alley
+Kudrinsk lane
+<Edges>
+Devincev^Bochkova street^10
+Kolomenski travel^Kudrinsk lane^7
+Devincev^Linden alley^14
+Cristmas alley^Bochkova street^17
+Linden alley^Iliinka^5

@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <random>
 #include <queue>
@@ -145,5 +146,38 @@ public:
             ptr->related_edges.clear();
         }
         Map->ClearEdges();
+    }
+
+    void DeleteEdge(const std::string& start, const std::string& finish) {
+        auto all_vertices = Map->GetAllVertices();
+        
+        if (all_vertices.find(start) == all_vertices.end() || 
+            all_vertices.find(finish) == all_vertices.end()) {
+            throw ErrorCode::NO_VERTEX;
+        }
+
+        std::string edge_key = start + finish;
+        auto all_edges = Map->GetAllEdges();
+
+        if (all_edges.find(edge_key) != all_edges.end()) {
+            Map->DeleteEdge(all_edges.at(edge_key));
+        } else {
+            std::string reverse_key = finish + start;
+            if (all_edges.find(reverse_key) != all_edges.end()) {
+                Map->DeleteEdge(all_edges.at(reverse_key));
+            } else {
+                throw ErrorCode::NO_EDGE;
+            }
+        }
+    }
+
+    void DeleteVertex(const std::string& place) {
+        auto all_vertices = Map->GetAllVertices();
+        
+        if (all_vertices.find(place) != all_vertices.end()) {
+            Map->DeleteVertex(all_vertices.at(place));
+        } else {
+            throw ErrorCode::VERTEX_DOESNT_EXIST;
+        }
     }
 };
