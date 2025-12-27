@@ -94,7 +94,7 @@ public:
         return vertices.find(vertex_data) != vertices.end();
     }
 
-    bool ContainsEdge(const TVertexData& first_vertex_data, const TEdgeData& second_vertex_data) const {
+    bool ContainsEdge(const TVertexData& first_vertex_data, const TVertexData& second_vertex_data) const {
         TVertexData edge_key_1 = first_vertex_data + second_vertex_data;
         TVertexData edge_key_2 = second_vertex_data + first_vertex_data;
 

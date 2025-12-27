@@ -3,11 +3,16 @@ CFLAGS = -Wall -Wextra -g
 LDFLAGS = -mwindows -lcomctl32
 
 SRCS = WinMain.cpp \
-       Errors/Errors.cpp
+       Errors/Errors.cpp \
+	   Tests/Tests.cpp \
+	   Tests/TestShell.cpp
+
 
 HEADERS = TransportMap/TransportMap.hpp \
           Graph/Graph.hpp \
-          Errors/Errors.hpp
+          Errors/Errors.hpp \
+		  Tests/Tests.hpp \
+		  Tests/TestShell.hpp
 
 OBJS = $(SRCS:.cpp=.o)
 

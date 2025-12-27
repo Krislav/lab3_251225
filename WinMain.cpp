@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include "TransportMap/TransportMap.hpp" 
+#include "Tests/Tests.hpp"
 
 #define ID_BTN_LOAD_FILE 101
 #define ID_BTN_CALC_PATH 102
@@ -17,6 +18,7 @@
 #define ID_BTN_DELETE_VERTEX 109
 #define ID_BTN_SAVE_FILE 110
 #define ID_BTN_READ_FILE 111
+#define ID_BTN_RUN_TESTS 112
 
 #define ID_EDIT_VERTEX_NAME 201
 #define ID_EDIT_EDGE_WEIGHT 202
@@ -30,6 +32,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void DrawGraph(HWND hwnd, HDC hdc);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    AllocConsole();
+    
+    FILE* fDummy;
+    freopen_s(&fDummy, "CONOUT$", "w", stdout);
+    freopen_s(&fDummy, "CONOUT$", "w", stderr);
+    freopen_s(&fDummy, "CONIN$", "r", stdin);
+
     const char CLASS_NAME[] = "TransportMapWindowClass";
     WNDCLASS wc = { };
     wc.lpfnWndProc = WindowProc;
@@ -80,6 +89,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         CreateWindowA("BUTTON", "Очистить ребра", WS_VISIBLE | WS_CHILD, startX, 400, 150, 30, hwnd, (HMENU)ID_BTN_CLEAR_EDGES, NULL, NULL);
         CreateWindowA("BUTTON", "Очистить всё", WS_VISIBLE | WS_CHILD, startX, 440, 150, 30, hwnd, (HMENU)ID_BTN_CLEAR_ALL, NULL, NULL);
         
+        CreateWindowA("BUTTON", "Запустить тесты", WS_VISIBLE | WS_CHILD, startX, 480, 150, 30, hwnd, (HMENU)ID_BTN_RUN_TESTS, NULL, NULL);
+
         return 0;
     }
 
@@ -254,6 +265,20 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     }
                 }
                 InvalidateRect(hwnd, NULL, TRUE);
+            }
+            break;
+        }
+
+        case ID_BTN_RUN_TESTS: {
+            try {
+                TestAll();
+                MessageBoxA(hwnd, "Все тесты успешно пройдены!", "Тестирование", MB_OK | MB_ICONINFORMATION);
+            } catch (const std::exception& e) {
+                std::string errorMsg = "Ошибка при выполнении тестов: ";
+                errorMsg += e.what();
+                MessageBoxA(hwnd, errorMsg.c_str(), "Ошибка тестов", MB_OK | MB_ICONERROR);
+            } catch (...) {
+                MessageBoxA(hwnd, "Произошла неизвестная ошибка при выполнении тестов.", "Ошибка тестов", MB_OK | MB_ICONERROR);
             }
             break;
         }
